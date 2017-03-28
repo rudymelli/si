@@ -1,0 +1,24 @@
+int side=300;
+size(300, 300);
+background(0);
+
+fill(random(255), random(255), random(255));
+ellipse(random(side), random(side), random(side), random(side));
+fill(random(255), random(255), random(255));
+ellipse(random(side), random(side), random(side), random(side));
+fill(random(255), random(255), random(255));
+ellipse(random(side), random(side), random(side), random(side));
+fill(random(255), random(255), random(255));
+ellipse(random(side), random(side), random(side), random(side));
+fill(random(255), random(255), random(255));
+ellipse(random(side), random(side), random(side), random(side));
+fill(random(255), random(255), random(255));
+ellipse(random(side), random(side), random(side), random(side));
+fill(random(255), random(255), random(255));
+ellipse(random(side), random(side), random(side), random(side));
+fill(random(255), random(255), random(255));
+ellipse(random(side), random(side), random(side), random(side));
+fill(random(255), random(255), random(255));
+ellipse(random(side), random(side), random(side), random(side));
+fill(random(255), random(255), random(255));
+ellipse(random(side), random(side), random(side), random(side));
