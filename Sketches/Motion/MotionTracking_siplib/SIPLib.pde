@@ -104,7 +104,7 @@ class SIPLib
         opencv.loadImage(imgCurrent);
         opencv.diff(imgFramePrev);
         area_motion = analize(sd_thSeg, sd_thAreaMin, false);
-        if(area_motion < 0.01)
+        if(false)//area_motion < 0.01)
         {
           if(!OnUpdate)
           {
