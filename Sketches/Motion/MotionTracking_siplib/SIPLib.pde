@@ -34,6 +34,15 @@ class SIPLib
     opencv = new OpenCV(parent, w, h);
   }
   
+  void drawInfo(int xtext, int ytext)
+  {
+    text("Area=" + this.area, xtext, ytext); ytext += 20;
+    text("Motion=" + this.area_motion, xtext, ytext); ytext += 20;
+    text("Cog " + this.cog.x + " y =" + this.cog.y, xtext, ytext); ytext += 20;
+    ytext += 20;
+    text("Threshold=" + threshold, xtext, ytext); ytext += 20;
+  }
+  
   float singleDifference(PImage imgFrame, int thSeg, int thAreaMin)
   {
     ++nFrame;
@@ -49,7 +58,7 @@ class SIPLib
     return area;
   }
     
-  float ShadowSegmentation(PImage imgFrame, int thSeg, int thAreaMin)
+  float shadowSegmentation(PImage imgFrame, int thSeg, int thAreaMin)
   {
     ++nFrame;
     // Store frame into opencv class

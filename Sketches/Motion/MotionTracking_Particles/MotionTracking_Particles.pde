@@ -5,7 +5,7 @@ import processing.video.*;
 import java.awt.*;
 
 Capture video;
-OpenCV opencv;
+SIPLib siplib;
 
 ArrayList <Mover> bouncers;
 int bewegungsModus = 3;
@@ -15,14 +15,11 @@ int barWidth = 20;
 int lastBar = -1;
 int TrackX = 0, TrackY = 0;
 
-SIPLib siplib;
-
 void setup()
 {
   size(640, 480);
   video = new Capture(this, 640/2, 480/2);
-  opencv = new OpenCV(this, 640/2, 480/2);
-  siplib = new SIPLib(opencv);
+  siplib = new SIPLib(this, 640/2, 480/2);
 
   video.start();
   
