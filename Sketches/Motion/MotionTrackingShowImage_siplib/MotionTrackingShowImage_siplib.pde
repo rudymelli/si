@@ -6,15 +6,19 @@ SIPLib siplib;
 int TrackX = 0, TrackY = 0;
 int threshold = 40;
 
+PImage img;
+
 void setup()
 {
   String[] cameras = Capture.list();
   printArray(cameras);
   size(640, 480);
-  video = new Capture(this, 640, 480);//640/2, 480/2);
+  video = new Capture(this, cameras[9]);//640, 480);//640/2, 480/2);
   siplib = new SIPLib(this, 640, 480);
 
   video.start();
+  
+  img = loadImage("traffic.jpg");
   
   //size (600, 200);
   smooth();
@@ -37,6 +41,10 @@ void draw() {
   fill(128);
   textSize(18);
   siplib.drawInfo(20, 20);
+  
+  if(siplib.cog.x > width/2)
+    image(img, 0, 0, width, height);
+
 
   // Draw a large, yellow circle at the brightest pixel
   fill(255, 204, 0, 128);

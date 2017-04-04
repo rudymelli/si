@@ -171,7 +171,7 @@ class SIPLib
       {
         float TrackX = TX / (float)nCog;
         float TrackY = TY / (float)nCog;
-        cogs.add(new PVector(TrackX, TrackY)); //<>//
+        cogs.add(new PVector(TrackX, TrackY)); //<>// //<>//
         if(cogs.size() > 5)
         {
           cogs.remove(0);
