@@ -27,6 +27,8 @@ import TUIO.*;
 // declare a TuioProcessing client
 TuioProcessing tuioClient;
 
+int countMarkers = 0;
+
 PImage []imgs = new PImage[2];
 
 void setup()
@@ -39,8 +41,10 @@ void setup()
   // an implementation of the TUIO callback methods in this class (see below)
   tuioClient = new TuioProcessing(this);
   
-  imgs[0] = loadImage("1.jpg");
-  imgs[1] = loadImage("2.jpg");
+  for(int i=0; i<2; i = i + 1)
+  {
+    imgs[i] = loadImage(i + ".jpg");
+  }
 }
 
 void draw()
@@ -59,11 +63,20 @@ void draw()
      int objYScreen = tobj.getScreenY(height);
      println("ID=" + objID + " x;y=" + objX + ";" + objY + " Rot=" + objRot + "°", objXScreen, objYScreen);
      
-     if(objID == 1)
-       image(imgs[0], 0, 0);
-     else if(objID == 2)
-       image(imgs[1], 0, 0);
+     // Your code start here
+     for(int j=0; j<2; j = j+1)
+     {
+       if(objID == j)
+         image(imgs[j], 0, 0);
+     }
+     //if(objID == 1)
+     //  image(imgs[0], 0, 0);
+     //else if(objID == 2)
+     //  image(imgs[1], 0, 0);
    }
+   
+   fill(255, 0, 0);
+   text(countMarkers, 20, 20);
 }
 
 // --------------------------------------------------------------
@@ -73,6 +86,7 @@ void draw()
 
 // called when an object is added to the scene
 void addTuioObject(TuioObject tobj) {
+  countMarkers = countMarkers + 1;
   println("add obj "+tobj.getSymbolID()+" ("+tobj.getSessionID()+") "+tobj.getX()+" "+tobj.getY()+" "+tobj.getAngle());
 }
 
@@ -84,42 +98,10 @@ void updateTuioObject (TuioObject tobj) {
 
 // called when an object is removed from the scene
 void removeTuioObject(TuioObject tobj) {
+  countMarkers = countMarkers - 1;
   println("del obj "+tobj.getSymbolID()+" ("+tobj.getSessionID()+")");
 }
 
-// --------------------------------------------------------------
-// called when a cursor is added to the scene
-void addTuioCursor(TuioCursor tcur) {
-  println("add cur "+tcur.getCursorID()+" ("+tcur.getSessionID()+ ") " +tcur.getX()+" "+tcur.getY());
-}
-
-// called when a cursor is moved
-void updateTuioCursor (TuioCursor tcur) {
-  println("set cur "+tcur.getCursorID()+" ("+tcur.getSessionID()+ ") " +tcur.getX()+" "+tcur.getY()
-          +" "+tcur.getMotionSpeed()+" "+tcur.getMotionAccel());
-}
-
-// called when a cursor is removed from the scene
-void removeTuioCursor(TuioCursor tcur) {
-  println("del cur "+tcur.getCursorID()+" ("+tcur.getSessionID()+")");
-}
-
-// --------------------------------------------------------------
-// called when a blob is added to the scene
-void addTuioBlob(TuioBlob tblb) {
-  println("add blb "+tblb.getBlobID()+" ("+tblb.getSessionID()+") "+tblb.getX()+" "+tblb.getY()+" "+tblb.getAngle()+" "+tblb.getWidth()+" "+tblb.getHeight()+" "+tblb.getArea());
-}
-
-// called when a blob is moved
-void updateTuioBlob (TuioBlob tblb) {
-  println("set blb "+tblb.getBlobID()+" ("+tblb.getSessionID()+") "+tblb.getX()+" "+tblb.getY()+" "+tblb.getAngle()+" "+tblb.getWidth()+" "+tblb.getHeight()+" "+tblb.getArea()
-          +" "+tblb.getMotionSpeed()+" "+tblb.getRotationSpeed()+" "+tblb.getMotionAccel()+" "+tblb.getRotationAccel());
-}
-
-// called when a blob is removed from the scene
-void removeTuioBlob(TuioBlob tblb) {
-  println("del blb "+tblb.getBlobID()+" ("+tblb.getSessionID()+")");
-}
 
 // --------------------------------------------------------------
 // called at the end of each TUIO frame
