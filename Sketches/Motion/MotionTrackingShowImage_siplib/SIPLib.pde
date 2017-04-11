@@ -73,15 +73,26 @@ class SIPLib
   {
     ++nFrame;
     // Tell OpenCV to use color information
-    opencv.useColor();
-    //if(opencv.colorSpace != HSB)
-      opencv.useColor(HSB);
+    //opencv.useColor();
+    opencv.useColor(HSB);
     // Store frame into opencv class
     opencv.loadImage(imgFrame);
     // Get only Hue channel
     opencv.setGray(opencv.getH().clone());
 
     analize(thSegMin, thSegMax, thAreaMin, true);
+    
+    return area;    
+  }
+
+  float colorSegmentationPixel(PImage imgFrame, color colTrack, float th_color, int thAreaMin)
+  {
+    ++nFrame;
+    
+    PImage imgCol = ExtractColor(imgFrame, colTrack, th_color);
+    // Store frame into opencv class
+    opencv.loadImage(imgCol);
+    analize(128, thAreaMin, true);
     
     return area;    
   }
@@ -219,5 +230,42 @@ class SIPLib
       area = area_perc;
     }
     return area_perc;
+  }
+  
+  PImage ExtractColor(PImage imgIn, color trackingColor, float th_color)
+  {
+    PImage img = imgIn.copy();
+    float r2 = trackingColor >> 16 & 0xFF;//red(trackingColor);
+    float g2 = trackingColor >> 8 & 0xFF;//green(trackingColor);
+    float b2 = trackingColor & 0xFF;//blue(trackingColor);
+    
+    int iscale = 1;
+    img.loadPixels();
+    // Begin loop to walk through every pixel
+    for (int y = 0; y < img.height; y+=iscale )
+    {
+      for (int x = 0; x < img.width; x+=iscale )
+      {
+        int loc = x + y*img.width;
+        // What is current color
+        color currentColor = img.pixels[loc];
+        float r1 = currentColor >> 16 & 0xFF;//red(currentColor); slow //c >> 16 & 0xFF;  // Very fast to calculate
+        float g1 = currentColor >> 8 & 0xFF;//green(currentColor);
+        float b1 = currentColor & 0xFF;//blue(currentColor);
+  
+        // Using euclidean distance to compare colors
+        float d = dist(r1,g1,b1,r2,g2,b2); // We are using the dist( ) function to compare the current color with the color we are tracking.
+  
+        // If current color is more similar to tracked color than
+        // closest color, save current location and current difference
+        if(d < th_color)
+          img.pixels[loc] = 0xffffff;
+        else
+          img.pixels[loc] = 0;
+      }
+    }
+    
+    img.updatePixels();
+    return img; 
   }
 }

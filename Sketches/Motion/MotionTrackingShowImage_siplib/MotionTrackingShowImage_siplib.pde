@@ -14,7 +14,7 @@ void setup()
   String[] cameras = Capture.list();
   printArray(cameras);
   size(640, 480);
-  video = new Capture(this, 640, 480);//640/2, 480/2);//cameras[9]);//
+  video = new Capture(this, 640, 480);
   siplib = new SIPLib(this, 640, 480);
 
   video.start();
@@ -34,7 +34,7 @@ void setup()
 //                    1=SingleDifference
 //                    2=BackgroundSuppression
 //                    3=ColorSegmentation
-int SegmentationMode = 3;
+int SegmentationMode = 4;
 
 void draw() 
 {
@@ -43,7 +43,7 @@ void draw()
   image(video, 0, 0);
 
   // Get mouse Color
-  if(SegmentationMode == 3)
+  if(SegmentationMode >= 3)
   {
     if(mousePressed)
     {
@@ -57,7 +57,7 @@ void draw()
   
   TrackX = (int)siplib.cog.x;
   TrackY = (int)siplib.cog.y;
-  if(siplib.cogs.size() > 0)
+  //if(siplib.cogs.size() > 0)
     image(siplib.imgSegment, 0, 0, siplib.imgSegment.width/2, siplib.imgSegment.height/2);
 
   fill(128);
@@ -86,6 +86,8 @@ void captureEvent(Capture c)
     siplib.backgroundSuppression(c, threshold, 50, true, 40, 50);
   else if(SegmentationMode == 3)
     siplib.colorSegmentation(c, (int)hue(colTrack) - threshold/2, (int)hue(colTrack) + threshold/2, 50);
+  else if(SegmentationMode == 4)
+    siplib.colorSegmentationPixel(c, colTrack, threshold, 50);
 }
 
 void keyPressed ()

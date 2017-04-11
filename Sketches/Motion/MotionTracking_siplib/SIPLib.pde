@@ -45,15 +45,15 @@ class SIPLib
   float singleDifference(PImage imgFrame, int thSeg, int thAreaMin)
   {
     ++nFrame;
-    if(imgReference != null)
+    if(imgFramePrev != null)
     {
       // Store frame into opencv class
       opencv.loadImage(imgFrame);
       // Difference with Previous frame
-      opencv.diff(imgReference);
+      opencv.diff(imgFramePrev);
       area_motion = analize(thSeg, thAreaMin, true);
     }
-    imgReference = imgFrame.copy();
+    imgFramePrev = imgFrame.copy();
     return area;
   }
     
@@ -64,9 +64,37 @@ class SIPLib
     opencv.loadImage(imgFrame);
     // The Shadow is black, invert the image to have it in white
     opencv.invert();
-    area_motion = analize(thSeg, thAreaMin, true);
+    analize(thSeg, thAreaMin, true);
     
     return area;
+  }
+  
+  float colorSegmentation(PImage imgFrame, int thSegMin, int thSegMax, int thAreaMin)
+  {
+    ++nFrame;
+    // Tell OpenCV to use color information
+    //opencv.useColor();
+    opencv.useColor(HSB);
+    // Store frame into opencv class
+    opencv.loadImage(imgFrame);
+    // Get only Hue channel
+    opencv.setGray(opencv.getH().clone());
+
+    analize(thSegMin, thSegMax, thAreaMin, true);
+    
+    return area;    
+  }
+
+  float colorSegmentationPixel(PImage imgFrame, color colTrack, float th_color, int thAreaMin)
+  {
+    ++nFrame;
+    
+    PImage imgCol = ExtractColor(imgFrame, colTrack, th_color);
+    // Store frame into opencv class
+    opencv.loadImage(imgCol);
+    analize(128, thAreaMin, true);
+    
+    return area;    
   }
     
   void storeBackground()
@@ -103,7 +131,7 @@ class SIPLib
         opencv.loadImage(imgCurrent);
         opencv.diff(imgFramePrev);
         area_motion = analize(sd_thSeg, sd_thAreaMin, false);
-        if(false)//area_motion < 0.01)
+        if(area_motion < 0.001)
         {
           if(!OnUpdate)
           {
@@ -128,7 +156,17 @@ class SIPLib
   float analize(int thSeg, int thAreaMin, boolean bStoreData)
   {
     opencv.threshold(thSeg);
+    return analize(thAreaMin, bStoreData);
+  }
     
+  float analize(int thSegMin, int thSegMax, int thAreaMin, boolean bStoreData)
+  {
+    opencv.inRange(thSegMin, thSegMax);
+    return analize(thAreaMin, bStoreData);
+  }
+    
+  float analize(int thAreaMin, boolean bStoreData)
+  {
     opencv.erode();
     //opencv.erode();
     //opencv.dilate();
@@ -171,7 +209,7 @@ class SIPLib
       {
         float TrackX = TX / (float)nCog;
         float TrackY = TY / (float)nCog;
-        cogs.add(new PVector(TrackX, TrackY)); //<>//
+        cogs.add(new PVector(TrackX, TrackY)); //<>// //<>//
         if(cogs.size() > 5)
         {
           cogs.remove(0);
@@ -192,5 +230,42 @@ class SIPLib
       area = area_perc;
     }
     return area_perc;
+  }
+  
+  PImage ExtractColor(PImage imgIn, color trackingColor, float th_color)
+  {
+    PImage img = imgIn.copy();
+    float r2 = trackingColor >> 16 & 0xFF;//red(trackingColor);
+    float g2 = trackingColor >> 8 & 0xFF;//green(trackingColor);
+    float b2 = trackingColor & 0xFF;//blue(trackingColor);
+    
+    int iscale = 1;
+    img.loadPixels();
+    // Begin loop to walk through every pixel
+    for (int y = 0; y < img.height; y+=iscale )
+    {
+      for (int x = 0; x < img.width; x+=iscale )
+      {
+        int loc = x + y*img.width;
+        // What is current color
+        color currentColor = img.pixels[loc];
+        float r1 = currentColor >> 16 & 0xFF;//red(currentColor); slow //c >> 16 & 0xFF;  // Very fast to calculate
+        float g1 = currentColor >> 8 & 0xFF;//green(currentColor);
+        float b1 = currentColor & 0xFF;//blue(currentColor);
+  
+        // Using euclidean distance to compare colors
+        float d = dist(r1,g1,b1,r2,g2,b2); // We are using the dist( ) function to compare the current color with the color we are tracking.
+  
+        // If current color is more similar to tracked color than
+        // closest color, save current location and current difference
+        if(d < th_color)
+          img.pixels[loc] = 0xffffff;
+        else
+          img.pixels[loc] = 0;
+      }
+    }
+    
+    img.updatePixels();
+    return img; 
   }
 }
