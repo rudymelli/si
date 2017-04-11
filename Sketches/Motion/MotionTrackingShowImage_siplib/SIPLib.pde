@@ -45,15 +45,15 @@ class SIPLib
   float singleDifference(PImage imgFrame, int thSeg, int thAreaMin)
   {
     ++nFrame;
-    if(imgReference != null)
+    if(imgFramePrev != null)
     {
       // Store frame into opencv class
       opencv.loadImage(imgFrame);
       // Difference with Previous frame
-      opencv.diff(imgReference);
+      opencv.diff(imgFramePrev);
       area_motion = analize(thSeg, thAreaMin, true);
     }
-    imgReference = imgFrame.copy();
+    imgFramePrev = imgFrame.copy();
     return area;
   }
     
@@ -64,9 +64,26 @@ class SIPLib
     opencv.loadImage(imgFrame);
     // The Shadow is black, invert the image to have it in white
     opencv.invert();
-    area_motion = analize(thSeg, thAreaMin, true);
+    analize(thSeg, thAreaMin, true);
     
     return area;
+  }
+  
+  float colorSegmentation(PImage imgFrame, int thSegMin, int thSegMax, int thAreaMin)
+  {
+    ++nFrame;
+    // Tell OpenCV to use color information
+    opencv.useColor();
+    //if(opencv.colorSpace != HSB)
+      opencv.useColor(HSB);
+    // Store frame into opencv class
+    opencv.loadImage(imgFrame);
+    // Get only Hue channel
+    opencv.setGray(opencv.getH().clone());
+
+    analize(thSegMin, thSegMax, thAreaMin, true);
+    
+    return area;    
   }
     
   void storeBackground()
@@ -103,7 +120,7 @@ class SIPLib
         opencv.loadImage(imgCurrent);
         opencv.diff(imgFramePrev);
         area_motion = analize(sd_thSeg, sd_thAreaMin, false);
-        if(false)//area_motion < 0.01)
+        if(area_motion < 0.001)
         {
           if(!OnUpdate)
           {
@@ -128,7 +145,17 @@ class SIPLib
   float analize(int thSeg, int thAreaMin, boolean bStoreData)
   {
     opencv.threshold(thSeg);
+    return analize(thAreaMin, bStoreData);
+  }
     
+  float analize(int thSegMin, int thSegMax, int thAreaMin, boolean bStoreData)
+  {
+    opencv.inRange(thSegMin, thSegMax);
+    return analize(thAreaMin, bStoreData);
+  }
+    
+  float analize(int thAreaMin, boolean bStoreData)
+  {
     opencv.erode();
     //opencv.erode();
     //opencv.dilate();

@@ -7,13 +7,14 @@ int TrackX = 0, TrackY = 0;
 int threshold = 40;
 
 PImage img;
+color colTrack;
 
 void setup()
 {
   String[] cameras = Capture.list();
   printArray(cameras);
   size(640, 480);
-  video = new Capture(this, cameras[9]);//640, 480);//640/2, 480/2);
+  video = new Capture(this, 640, 480);//640/2, 480/2);//cameras[9]);//
   siplib = new SIPLib(this, 640, 480);
 
   video.start();
@@ -28,53 +29,81 @@ void setup()
 }
 
 
-void draw() {
+// SegmentationMode:  
+//                    0=ShadowSegmentation
+//                    1=SingleDifference
+//                    2=BackgroundSuppression
+//                    3=ColorSegmentation
+int SegmentationMode = 3;
+
+void draw() 
+{
   // Visualizzazione
   background(0);
-  image(video, 0, 0, 320, 240);
+  image(video, 0, 0);
+
+  // Get mouse Color
+  if(SegmentationMode == 3)
+  {
+    if(mousePressed)
+    {
+      //colTrack = Color.HSBtoRGB((float)mouseX / width,1,1);
+      colTrack = video.get(mouseX * video.width / width, mouseY * video.height / height);
+      println("col=" + colTrack + " hue=" + hue(colTrack));
+    }
+    fill(colTrack);
+    rect(0, height-50, 50, 50);
+  }
   
-  TrackX = (int)siplib.cog.x / 2;
-  TrackY = (int)siplib.cog.y / 2;
+  TrackX = (int)siplib.cog.x;
+  TrackY = (int)siplib.cog.y;
   if(siplib.cogs.size() > 0)
-    image(siplib.imgSegment, 320, 0, 320, 240);
+    image(siplib.imgSegment, 0, 0, siplib.imgSegment.width/2, siplib.imgSegment.height/2);
 
   fill(128);
   textSize(18);
   siplib.drawInfo(20, 20);
   
   if(siplib.cog.x > width/2)
-    image(img, 0, 0, width, height);
+    image(img, width/2, height/2, width, height);
 
 
   // Draw a large, yellow circle at the brightest pixel
   fill(255, 204, 0, 128);
   ellipse(TrackX, TrackY, 50, 50);
 
-  noStroke();
+  //noStroke();
 }
 
-void captureEvent(Capture c) {
+void captureEvent(Capture c)
+{
   c.read();
-  //siplib.singleDifference(c, threshold, 50);
-  siplib.backgroundSuppression(c, threshold, 50, true, 40, 50);
-  //siplib.shadowSegmentation(c, threshold, 50);
+  if(SegmentationMode == 0)
+    siplib.shadowSegmentation(c, threshold, 50);
+  else if(SegmentationMode == 1)
+    siplib.singleDifference(c, threshold, 50);
+  else if(SegmentationMode == 2)
+    siplib.backgroundSuppression(c, threshold, 50, true, 40, 50);
+  else if(SegmentationMode == 3)
+    siplib.colorSegmentation(c, (int)hue(colTrack) - threshold/2, (int)hue(colTrack) + threshold/2, 50);
 }
 
 void keyPressed ()
 {
   if(key == '+')
     threshold += 10;
-  if(key == '-')
+  else if(key == '-')
     threshold -= 10;
-  if(key == 'w')
+  else if(key == 'p')
     threshold += 1;
-  if(key == 'q')
+  else if(key == 'o')
     threshold -= 1;
+  else if(key == ' ' && SegmentationMode == 2)
+    siplib.storeBackground();
   if(threshold < 0)
     threshold = 0;
   if(threshold > 255)
     threshold = 255;
-  siplib.storeBackground();
 }
 
 void mousePressed ()
