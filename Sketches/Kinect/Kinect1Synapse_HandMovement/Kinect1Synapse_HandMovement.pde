@@ -7,7 +7,6 @@ OscP5 oscP5, oscP5_out;
 NetAddress myRemoteLocation;
 
 float lhx, lhy, lhz, rhx = 0, rhy, rhz, hx, hy, hz; // coordinates
-float prev_x = 0;
 
 void setup() {
 
@@ -21,25 +20,23 @@ void setup() {
 }
 
 float dhand = 0;
+float prev_x = 0;
 boolean spazzolata = false;
-
-void draw() {
-  background(0); 
-  sendData(); //refresh
-  
+void ControllaMano(float xmano, float ymano)
+{
   if(frameCount % 100 == 0)
   {
     spazzolata = false;
-    if(rhy > 0)
+    if(ymano > 0)
     {
-      dhand = rhx - prev_x;
-      if((rhx - prev_x) >= 250)
+      dhand = xmano - prev_x;
+      if((xmano - prev_x) >= 250)
       {
         println("Spazzolata");
         spazzolata = true;
       }
     }
-    prev_x = rhx;
+    prev_x = xmano;
   }
   
   if(spazzolata)
@@ -47,7 +44,15 @@ void draw() {
     background(255, 0, 0);
   }
 
-  println("Distanza (m)=" + hz / 1000 + " DHand=" + dhand + " y=" + rhy);
+  //println("Distanza (m)=" + hz / 1000 + " DHand=" + dhand + " y=" + ymano);
+}
+
+void draw() {
+  background(0); 
+  sendData(); //refresh
+  
+  ControllaMano(rhx);
+  
   text(frameRate, 20, 20);
 }
 
