@@ -10,6 +10,7 @@ SIPLib siplib;
 ArrayList <Mover> bouncers;
 int bewegungsModus = 3;
 boolean transparentBG = true;
+int threshold = 40;
 
 int barWidth = 20;
 int lastBar = -1;
@@ -44,7 +45,7 @@ void draw() {
   
   TrackX = (int)siplib.cog.x * 2;
   TrackY = (int)siplib.cog.y * 2;
-  if(siplib.cogs.size() > 0)
+  //if(siplib.cogs.size() > 0)
     image(siplib.imgSegment, 320, 0);
 
   // Visualizzazione
@@ -86,8 +87,8 @@ void draw() {
 
 void captureEvent(Capture c) {
   c.read();
-  //siplib.singleDifference(c, 40, 50);
-  siplib.backgroundSuppression(c, 40, 50, true, 40, 50);
+  siplib.singleDifference(c, 40, 50);
+  //siplib.backgroundSuppression(c, 40, 50, true, 40, 50);
 }
 
 class Mover
