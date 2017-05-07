@@ -20,12 +20,16 @@ class SIPLib
   // List of blobs
   ArrayList<Contour> blobs;
   int nFrame = 0;
+  int threshold = 40;
+  int threshold_H = 50;
+  int th_areamin = 100;
   int area_pixel = 0;
+  float autoUpdateBkgNoMotionDelay_sec = 15.0;
   float area = 0;
   float area_motion = 0;
   float elapsedUpdate = 0;
   boolean OnUpdate = false;
-  private String version = "0.0.1"; 
+  private String version = "1.0.01"; 
   
   SIPLib(PApplet parent, int w, int h)
   {
@@ -36,15 +40,27 @@ class SIPLib
   void drawInfo(int xtext, int ytext)
   {
     text("Area=" + this.area, xtext, ytext); ytext += 20;
-    text("Motion=" + this.area_motion, xtext, ytext); ytext += 20;
+    String szMsg = "Motion=" + this.area_motion;
+    if(OnUpdate)
+      szMsg += "  (update in " + (int)(autoUpdateBkgNoMotionDelay_sec - (millis() - elapsedUpdate) / 1000.0) + " sec)";
+    text(szMsg, xtext, ytext); ytext += 20;
     text("Cog " + this.cog.x + " y =" + this.cog.y, xtext, ytext); ytext += 20;
     ytext += 20;
-    text("Threshold=" + threshold, xtext, ytext); ytext += 20;
+    text("Threshold=" + this.threshold, xtext, ytext); ytext += 20;
+  }
+  
+  void newFrameEvent(PImage imgFrame, int thSeg, int thSeg_H, int thAreaMin)
+  {
+    ++nFrame;
+    this.threshold = thSeg;
+    this.threshold_H = thSeg_H;
+    this.th_areamin = thAreaMin;
+    imgCurrent = imgFrame.copy();
   }
   
   float singleDifference(PImage imgFrame, int thSeg, int thAreaMin)
   {
-    ++nFrame;
+    newFrameEvent(imgFrame, thSeg, thSeg, thAreaMin);
     if(imgFramePrev != null)
     {
       // Store frame into opencv class
@@ -59,7 +75,7 @@ class SIPLib
     
   float shadowSegmentation(PImage imgFrame, int thSeg, int thAreaMin)
   {
-    ++nFrame;
+    newFrameEvent(imgFrame, thSeg, thSeg, thAreaMin);
     // Store frame into opencv class
     opencv.loadImage(imgFrame);
     // The Shadow is black, invert the image to have it in white
@@ -71,7 +87,7 @@ class SIPLib
   
   float colorSegmentation(PImage imgFrame, int thSegMin, int thSegMax, int thAreaMin)
   {
-    ++nFrame;
+    newFrameEvent(imgFrame, thSegMin, thSegMax, thAreaMin);
     // Tell OpenCV to use color information
     //opencv.useColor();
     opencv.useColor(HSB);
@@ -87,8 +103,7 @@ class SIPLib
 
   float colorSegmentationPixel(PImage imgFrame, color colTrack, float th_color, int thAreaMin)
   {
-    ++nFrame;
-    
+    newFrameEvent(imgFrame, (int)th_color, (int)th_color, thAreaMin);
     PImage imgCol = ExtractColor(imgFrame, colTrack, th_color);
     // Store frame into opencv class
     opencv.loadImage(imgCol);
@@ -113,8 +128,7 @@ class SIPLib
   float backgroundSuppression(PImage imgFrame, int thSeg, int thAreaMin, 
     boolean bSmartBackground, int sd_thSeg, int sd_thAreaMin)
   {
-    ++nFrame;
-    imgCurrent = imgFrame.copy();
+    newFrameEvent(imgFrame, thSeg, thSeg, thAreaMin);
     if(imgReference != null)
     {
       opencv.loadImage(imgCurrent);
@@ -138,11 +152,15 @@ class SIPLib
             OnUpdate = true;
             elapsedUpdate = millis();
           }
-          else if(millis() - elapsedUpdate > 15000)
+          else if(millis() - elapsedUpdate > (int)(autoUpdateBkgNoMotionDelay_sec * 1000))
           {
             storeBackground();
             OnUpdate = false;
           }
+        }
+        else
+        {
+          OnUpdate = false;
         }
       }
       imgFramePrev = imgCurrent.copy();

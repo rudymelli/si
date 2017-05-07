@@ -33,9 +33,9 @@ void setup()
 //                    0=ShadowSegmentation
 //                    1=SingleDifference
 //                    2=BackgroundSuppression
-//                    20=BackgroundSuppression manuale
-//                    3=ColorSegmentation
-int SegmentationMode = 4;
+//                    3=BackgroundSuppression manuale
+//                    4=ColorSegmentation
+int SegmentationMode = 2;
 
 void draw() 
 {
@@ -85,10 +85,8 @@ void captureEvent(Capture c)
     siplib.singleDifference(c, threshold, 50);
   else if(SegmentationMode == 2)
     siplib.backgroundSuppression(c, threshold, 50, true, 40, 50);
-  else if(SegmentationMode == 20)
-    siplib.backgroundSuppression(c, threshold, 50, false, 40, 50);
   else if(SegmentationMode == 3)
-    siplib.colorSegmentation(c, (int)hue(colTrack) - threshold/2, (int)hue(colTrack) + threshold/2, 50);
+    siplib.backgroundSuppression(c, threshold, 50, false, 40, 50);
   else if(SegmentationMode == 4)
     siplib.colorSegmentationPixel(c, colTrack, threshold, 50);
 }
