@@ -48,8 +48,9 @@ void draw() {
 void captureEvent(Capture c) {
   c.read();
   //siplib.singleDifference(c, threshold, 50);
-  siplib.backgroundSuppression(c, threshold, 50, true, 40, 50);
+  //siplib.backgroundSuppression(c, threshold, 50, true, 40, 50);
   //siplib.shadowSegmentation(c, threshold, 50);
+  siplib.lightSegmentation(c, threshold, 50);
 }
 
 void keyPressed ()
