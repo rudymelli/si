@@ -29,12 +29,15 @@ class SIPLib
   float area_motion = 0;
   float elapsedUpdate = 0;
   boolean OnUpdate = false;
-  private String version = "1.0.01"; 
+  private String version = "1.0.02";
+  int closingPass = 0;
+  int openingPass = 1;
   
   SIPLib(PApplet parent, int w, int h)
   {
-    println("SIPLib Sistemi Interattivi Processing Library " + version + ", 2017 by Rudy Melli http://www.vision-e.it/si");
+    println("SIPLib Sistemi Interattivi Processing Library " + version + " (" + w + "x" + h + "), 2017 by Rudy Melli http://www.vision-e.it/si");
     opencv = new OpenCV(parent, w, h);
+    blobs = new ArrayList<Contour>();
   }
   
   void drawInfo(int xtext, int ytext)
@@ -185,10 +188,18 @@ class SIPLib
     
   float analize(int thAreaMin, boolean bStoreData)
   {
-    opencv.erode();
-    //opencv.erode();
-    //opencv.dilate();
-    opencv.dilate();
+    for(int i=0; i<openingPass; i++)
+      opencv.erode();
+      //opencv.erode();
+      //opencv.dilate();
+    for(int i=0; i<openingPass; i++)
+      opencv.dilate();
+
+    for(int i=0; i<closingPass; i++)
+      opencv.dilate();
+    for(int i=0; i<closingPass; i++)
+      opencv.erode();
+
     
     if(bStoreData)
       imgSegment = opencv.getSnapshot();
@@ -197,7 +208,7 @@ class SIPLib
     contours = opencv.findContours();
     
     if(bStoreData)
-      blobs = contours;
+      blobs.clear();
     
     float areatot = 0;
     float TX = 0, TY = 0;
@@ -209,6 +220,10 @@ class SIPLib
       if (r.width < 20 || r.height < 20)
         continue;
       float a = contour.area();
+      if(a >  thAreaMin)
+      {
+        blobs.add(contour);
+      }
       if(a > areatot)
       {
         areatot += a;
@@ -285,5 +300,34 @@ class SIPLib
     
     img.updatePixels();
     return img; 
+  }
+  
+  float GetRectMotion(Rectangle rc)
+  {
+    float area_motion_rc = 0;
+    if(imgSegment != null)
+    {
+      PImage imgRc = imgSegment.get(rc.x, rc.y, rc.width, rc.height);
+      imgRc.loadPixels();
+      // Begin loop to walk through every pixel
+      int area_rc = 0;
+      for (int y = 0; y < imgRc.height; y+=1 )
+      {
+        for (int x = 0; x < imgRc.width; x+=1 )
+        {
+          int loc = x + y*imgRc.width;
+          if(imgRc.pixels[loc] > 0)
+            ++area_rc;
+        }
+      }
+      area_motion_rc = (float)area_rc / (imgRc.width * imgRc.height);
+    }
+    return area_motion_rc;
+  }
+  
+  color GetIndexColor(int i)
+  {
+        color ci = color((16 * (i + 1) << i) % 255, (32 * (i + 1) << i) % 255, (8 * (i + 1) << i) % 255);
+        return ci;
   }
 }
