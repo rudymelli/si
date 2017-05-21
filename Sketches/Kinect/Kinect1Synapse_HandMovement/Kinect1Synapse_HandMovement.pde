@@ -51,7 +51,7 @@ void draw() {
   background(0); 
   sendData(); //refresh
   
-  ControllaMano(rhx);
+  ControllaMano(rhx, rhy);
   
   text(frameRate, 20, 20);
 }
