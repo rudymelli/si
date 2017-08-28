@@ -39,6 +39,13 @@ void webSocketServerEvent(String msg)
    lastSpeech = msg;
    println(msg);
    crono_ws = millis();
+   String[] m1 = match(msg, "prova");
+   if (m1 != null) 
+   {  
+     // If not null, then a match was found
+     println("-----------------------");
+   }
+
 }
 
 void openSpeechDetectorLink()
