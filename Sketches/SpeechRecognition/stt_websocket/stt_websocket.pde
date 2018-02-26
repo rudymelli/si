@@ -8,7 +8,7 @@ import websockets.*;
 WebsocketServer ws;
 int crono_check = 60000;
 int crono_ws = -crono_check;
-String SpeechDetectorLink = "http://interattivi.altervista.org/si_wordpress/speech.html";
+String SpeechDetectorLink = "https://interattivi.altervista.org/si_wordpress/speech.html";
 String lastSpeech = "";
 
 void setup()
