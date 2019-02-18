@@ -87,6 +87,17 @@ class SIPLib
     
     return area;
   }
+
+  float lightSegmentation(PImage imgFrame, int thSeg, int thAreaMin)
+  {
+    newFrameEvent(imgFrame, thSeg, thSeg, thAreaMin);
+    // Store frame into opencv class
+    opencv.loadImage(imgFrame);
+    analize(thSeg, thAreaMin, true);
+    
+    return area;
+  }
+
   
   float colorSegmentation(PImage imgFrame, int thSegMin, int thSegMax, int thAreaMin)
   {
