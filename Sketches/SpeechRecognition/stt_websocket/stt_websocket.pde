@@ -37,15 +37,14 @@ void webSocketServerEvent(String msg)
 {
    // Ho ricevuto qualcosa dalla pagina web
    lastSpeech = msg;
-   println(msg);
+   println(msg + " (" + msg.length());
    crono_ws = millis();
-   String[] m1 = match(msg, "prova");
+   String[] m1 = match(msg, "mela");
    if (m1 != null) 
    {  
      // If not null, then a match was found
      println("-----------------------");
    }
-
 }
 
 void openSpeechDetectorLink()

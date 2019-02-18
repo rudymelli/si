@@ -65,7 +65,7 @@ public void draw() {
     // draw the rects with a scale factor
     rect( i*r_width, height, r_width, -sum[i]*height*scale );
   }
-  float f_hz = (imax * 1000000.0 / bands);// * 27343.75 - 900000000;
+  float f_hz = (imax * 10000.0 / bands * 2.22222);// * 27343.75 - 900000000;
   freq.append(f_hz);
   if(freq.size() > 30)
     freq.remove(0);

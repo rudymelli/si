@@ -7,6 +7,7 @@ OscP5 oscP5, oscP5_out;
 NetAddress myRemoteLocation;
 
 float lhx, lhy, lhz, rhx = 0, rhy, rhz, hx, hy, hz; // coordinates
+float rfx, rfy, rfz;
 
 void setup() {
 
@@ -15,7 +16,7 @@ void setup() {
   oscP5 = new OscP5(this, 12345);
   oscP5_out = new OscP5(this, 22345);
   
-  myRemoteLocation = new NetAddress("10.0.4.61", 12346);
+  myRemoteLocation = new NetAddress("127.0.0.1", 12346);
   frameRate(100);
 }
 
@@ -35,8 +36,8 @@ void ControllaMano(float xmano, float ymano)
         println("Spazzolata");
         spazzolata = true;
       }
+      prev_x = xmano;
     }
-    prev_x = xmano;
   }
   
   if(spazzolata)
@@ -52,6 +53,7 @@ void draw() {
   sendData(); //refresh
   
   ControllaMano(rhx, rhy);
+  println("Mano destra: " + rhx + ";" + rhy);
   
   text(frameRate, 20, 20);
 }
@@ -61,14 +63,17 @@ void sendData()
   OscMessage myMessage = new OscMessage("/righthand_trackjointpos");
   OscMessage myMessage2 = new OscMessage("/lefthand_trackjointpos");
   OscMessage myMessage3 = new OscMessage("/head_trackjointpos");
-
+  OscMessage myMessage4 = new OscMessage("/rightfoot_trackjointpos");
+  //...aggiungere richiesta altri dati
   myMessage.add(1);
   myMessage2.add(1);
   myMessage3.add(2);
+  myMessage4.add(1);
 
   oscP5.send(myMessage, myRemoteLocation); 
   oscP5.send(myMessage2, myRemoteLocation); 
   oscP5.send(myMessage3, myRemoteLocation);
+  oscP5.send(myMessage4, myRemoteLocation);
 }
 
 
@@ -98,5 +103,12 @@ void oscEvent(OscMessage theOscMessage)
     hx = theOscMessage.get(0).floatValue();  
     hy = theOscMessage.get(1).floatValue();
     hz = theOscMessage.get(2).floatValue();
+  }
+  
+    if (v.equals("/rightfoot_pos_body")) 
+  {
+    rfx = theOscMessage.get(0).floatValue();  
+    rfy = theOscMessage.get(1).floatValue();
+    rfz = theOscMessage.get(2).floatValue();
   }
 }
