@@ -7,8 +7,7 @@ void setup() {
     soundfile = new SoundFile(this, "vibraphon.aiff");
     // Play the file in a loop
     soundfile.loop();
-}      
-
+}
 
 void draw() {
 }

@@ -29,7 +29,8 @@ TuioProcessing tuioClient;
 
 int countMarkers = 0;
 
-PImage []imgs = new PImage[2];
+//PImage []imgs = new PImage[2];
+PImage img0, img1;
 
 void setup()
 {
@@ -41,10 +42,13 @@ void setup()
   // an implementation of the TUIO callback methods in this class (see below)
   tuioClient = new TuioProcessing(this);
   
-  for(int i=0; i<2; i = i + 1)
-  {
-    imgs[i] = loadImage(i + ".jpg");
-  }
+  //for(int i=0; i<2; i = i + 1)
+  //{
+  //  imgs[i] = loadImage(i + ".jpg");
+  //}
+  img0 = loadImage("0.jpg");
+  img1 = loadImage("1.jpg");
+  
 }
 
 void draw()
@@ -64,15 +68,15 @@ void draw()
      println("ID=" + objID + " x;y=" + objX + ";" + objY + " Rot=" + objRot + "°", objXScreen, objYScreen);
      
      // Your code start here
-     for(int j=0; j<2; j = j+1)
-     {
-       if(objID == j)
-         image(imgs[j], 0, 0);
-     }
-     //if(objID == 1)
-     //  image(imgs[0], 0, 0);
-     //else if(objID == 2)
-     //  image(imgs[1], 0, 0);
+     //for(int j=0; j<2; j = j+1)
+     //{
+     //  if(objID == j)
+     //    image(imgs[j], 0, 0);
+     //}
+     if(objID == 0)
+       image(img0, 0, 0);
+     else if(objID == 1)
+       image(img1, 0, 0);
    }
    
    fill(255, 0, 0);

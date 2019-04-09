@@ -57,9 +57,9 @@ void draw() {
 
 void captureEvent(Capture c) {
   c.read();
-  //siplib.singleDifference(c, threshold, 50);
+  siplib.singleDifference(c, threshold, 50);
   //siplib.backgroundSuppression(c, threshold, 50, true, 40, 50);
-  siplib.shadowSegmentation(c, threshold, 50);
+  //siplib.shadowSegmentation(c, threshold, 50);
   //siplib.lightSegmentation(c, threshold, 50);
   //siplib.colorSegmentationPixel(c,threshold,,);
 }
@@ -78,7 +78,8 @@ void keyPressed ()
     threshold = 0;
   if(threshold > 255)
     threshold = 255;
-  siplib.storeBackground();
+  if(key == ' ')
+    siplib.storeBackground();
   countdown = 30;
 }
 

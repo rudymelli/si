@@ -9,7 +9,7 @@ feedback. We recommend to wear headphones for this example.
 
 import processing.sound.*;
 
-AudioIn input;
+AudioIn mic_in;
 Amplitude rms;
 
 FloatList inventory = new FloatList();
@@ -21,16 +21,16 @@ void setup() {
     background(255);
         
     //Create an Audio input and grab the 1st channel
-    input = new AudioIn(this, 0);
+    mic_in = new AudioIn(this, 0);
     
     // start the Audio Input
-    input.start();
+    mic_in.start();
     
     // create a new Amplitude analyzer
     rms = new Amplitude(this);
     
     // Patch the input to an volume analyzer
-    rms.input(input);
+    rms.input(mic_in);
 }      
 
 
@@ -38,7 +38,7 @@ void draw() {
     background(200);
     
     // adjust the volume of the audio input
-    input.amp(map(mouseY, height, 0, 0.0, 1.0));
+    mic_in.amp(map(mouseY, height, 0, 0.0, 1.0));
     
     // rms.analyze() return a value between 0 and 1. To adjust
     // the scaling and mapping of an ellipse we scale from 0 to 0.5
