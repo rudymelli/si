@@ -98,7 +98,7 @@ void draw()
     // Disegno un cerchio ai piedi del blob
     fill(ci);
     ellipse(r.x + r.width/2, r.y + r.height, 5, 5);
-}
+  }
 
   //noStroke();
 }
