@@ -29,7 +29,8 @@ void draw()
          else
            background(0);  
          
-         text(frameRate, 20, 20);
+         text(ival, 20, 20);
+         text(frameRate, 20, 50);
        }
      }
      catch(Exception e)

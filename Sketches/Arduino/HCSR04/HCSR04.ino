@@ -48,10 +48,10 @@ void loop() {
  if (distance >= maximumRange || distance <= minimumRange){
  /* Send a negative number to computer and Turn LED ON 
  to indicate "out of range" */
- if(last_distance > 0)
-  distance = last_distance-2;
- if(distance < 0)
+ if(distance <= 0)
    distance = 0;
+ else if(last_distance > 0)
+  distance = last_distance-2;
  //Serial.println("-1");
  Serial.println(last_distance);
  //digitalWrite(LEDPin, LOW);
