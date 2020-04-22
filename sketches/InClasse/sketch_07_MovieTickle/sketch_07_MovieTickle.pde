@@ -14,7 +14,7 @@ void setup() {
   size(640, 360);
   background(0);
   // Load and play the video in a loop
-  movie = new Movie(this, "transit.mov");
+  movie = new Movie(this, "../../../../media/transit.mov");
   movie.loop();
   
   x = width / 2;
