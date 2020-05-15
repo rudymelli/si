@@ -281,9 +281,7 @@ class SIPLib
       if(a >  thAreaMin)
       {
         blobs.add(contour);
-      //}
-      //if(a > areatot)
-      //{
+
         areatot += a;
         // Coordinate dell'oggetto i-esimo
         float iTX = (float)r.getCenterX();
@@ -373,6 +371,7 @@ class SIPLib
     if(imgSegment != null)
     {
       PImage imgRc = imgSegment.get(rc.x, rc.y, rc.width, rc.height);
+      //image(imgRc, 0, 0);
       imgRc.loadPixels();
       // Begin loop to walk through every pixel
       int area_rc = 0;
@@ -381,11 +380,16 @@ class SIPLib
         for (int x = 0; x < imgRc.width; x+=1 )
         {
           int loc = x + y*imgRc.width;
-          if(imgRc.pixels[loc] > 0)
+          color currentColor = imgRc.pixels[loc];
+          float r1 = currentColor >> 16 & 0xFF;
+          float g1 = currentColor >> 8 & 0xFF;
+          float b1 = currentColor & 0xFF;         
+          if(r1+g1+b1 > 0)
             ++area_rc;
         }
       }
-      area_motion_rc = (float)area_rc / (imgRc.width * imgRc.height);
+      imgRc.updatePixels();
+      area_motion_rc = (float)area_rc / (float)(imgRc.width * imgRc.height);
     }
     return area_motion_rc;
   }

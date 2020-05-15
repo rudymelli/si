@@ -18,6 +18,8 @@ color colTrack = -9558454;
 // 0 = video, 1 = webcam
 int source_type = 0;
 
+Rectangle rect_zone = new Rectangle(50, 120, 50, 50); 
+
 // SegmentationMode:  
 //                    0=ShadowSegmentation
 //                    1=SingleDifference
@@ -93,6 +95,18 @@ void draw() {
   fill(0, 0, 255, 128);
   ellipse(pt_schermo.x, pt_schermo.y, 35, 35);
   
+  noFill();
+  stroke(255, 0, 0, 255);
+  rect(rect_zone.x, rect_zone.y, rect_zone.width, rect_zone.height);
+  float rect_zone_motion = siplib.GetRectMotion(rect_zone);
+  text(rect_zone_motion, rect_zone.x, rect_zone.y - 1);
+  if(rect_zone_motion > 0.05)
+  {
+    fill(255, 0, 0, 100);
+    rect(rect_zone.x, rect_zone.y, rect_zone.width, rect_zone.height); 
+  }
+  
+  
   strokeWeight(5);
   // Tracking multiplo
   for(int i=0; i<siplib.blobs.size(); i++)
@@ -116,15 +130,15 @@ void draw() {
     line(pt_schermo.x, pt_schermo.y, ptfoot.x, ptfoot.y);
     float d = distance(pt_schermo, ptfoot);
     
-    text(i + " - " + d, r.x, r.y - 1);
+    text(i + " - " + (int)d, r.x, r.y - 1);
     
+    noFill();
     if(d < 50)
     {
       stroke(255, 0, 0, 100);
       strokeWeight(10);
-      noFill();
       rect(r.x, r.y, r.width, r.height);   
-    }    
+    }
   }
 
   noFill();
