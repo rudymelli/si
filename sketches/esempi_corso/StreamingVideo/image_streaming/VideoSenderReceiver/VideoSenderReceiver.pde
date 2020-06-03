@@ -9,6 +9,7 @@ import java.io.*;
 // This is the port we are sending to
 int clientPortTx = 9100;  // Porta trasmissione 
 int PortRx = 9100; // Porta ricezione
+// Come trovare il proprio ip interno alla rete: https://lifehacker.com/how-to-find-your-local-and-external-ip-address-5833108
 String clientIP = "192.168.1.150"; // IP of client to send video
 // This is our object that sends UDP out
 DatagramSocket ds; 
@@ -40,13 +41,16 @@ void setup() {
   cam.start();
 }
 
-void captureEvent( Capture c ) {
-  c.read();
-  // Whenever we get a new image, send it!
-  broadcast(c);
-}
-
 void draw() {
+  if(cam.available())
+  {
+    cam.read();
+    
+    // Qui inserire le proprie modifiche/effetti/....
+    
+    // Whenever we get a new image, send it!
+    broadcast(cam);
+  }
   checkForImage();
   background(0);
   image(video,0,0);
