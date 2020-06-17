@@ -8,7 +8,7 @@ import java.io.*;
 
 // This is the port we are sending to
 int clientPort = 9100; 
-String clientIP = "192.168.1.150"; // IP of client to send video
+String clientIP = "127.0.0.1"; // IP of client to send video
 // This is our object that sends UDP out
 DatagramSocket ds; 
 // Capture object
@@ -25,7 +25,7 @@ void setup() {
   // Initialize Camera
   String []cameras = Capture.list();
   printArray(cameras);
-  cam = new Capture(this, cameras[10]);
+  cam = new Capture(this, cameras[28]);
   cam.start();
 }
 

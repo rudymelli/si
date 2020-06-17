@@ -5,7 +5,7 @@ import java.net.*;
 import java.io.*;
 
 // Port we are receiving.
-int port = 9100; 
+int port = 9101; 
 DatagramSocket ds; 
 // A byte array to read into (max size of 65536, could be smaller)
 byte[] buffer = new byte[65536]; 
